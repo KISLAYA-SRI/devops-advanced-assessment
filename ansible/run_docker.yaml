@@ -1,0 +1,22 @@
+---
+- hosts: all
+  become: true
+  vars:
+    default_container_name: node-app
+    default_container_image: "kissriva/node-app"
+    image_tag: "latest"
+  tasks:
+    - name: Pull default Docker image
+      docker_image:
+        name: "{{ default_container_image }}:{{ image_tag }}"
+        source: pull
+
+    - name: Create default containers
+      docker_container:
+        name: "{{ default_container_name }}"
+        image: "{{ default_container_image }}:{{ image_tag }}"
+        auto_remove: yes
+        detach: yes
+        state: started
+        ports:
+          - "8080:5001"
