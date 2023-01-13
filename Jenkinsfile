@@ -17,7 +17,7 @@ pipeline{
         stage('npm test') {
             steps {
                 dir("node_app"){
-                    sh 'npm test test'
+                    sh 'npm test'
                 }
             }
         }
