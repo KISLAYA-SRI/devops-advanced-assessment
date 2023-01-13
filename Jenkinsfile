@@ -16,9 +16,6 @@ pipeline{
         }
         stage('npm test') {
             steps {
-                timeout(time: 5, unit: 'MINUTES') {
-                  	input(id: "sonar", message: "SonarQube", ok: 'OK')
-                }
                 dir("node_app"){
                     // sh 'npm test'
                     sh "echo testing"
@@ -43,7 +40,7 @@ pipeline{
         stage('Docker build image') {
             steps {
                 script{
-                        sh "docker build -t kissriva/node-app"
+                        sh "docker build -t kissriva/node-app ."
                 }
             }
         }
