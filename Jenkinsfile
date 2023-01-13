@@ -40,14 +40,14 @@ pipeline{
         stage('Docker build image') {
             steps {
                 script{
-                        sh "docker build -t kissriva/node-app ."
+                        sh "sudo docker build -t kissriva/node-app ."
                 }
             }
         }
         stage('Docker push image') {
             steps {
                 script{
-                    sh 'docker push kissriva/node-app'
+                    sh 'sudo docker push kissriva/node-app'
                 }
             }
         }
