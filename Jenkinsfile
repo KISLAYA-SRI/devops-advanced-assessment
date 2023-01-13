@@ -46,12 +46,7 @@ pipeline{
         stage('Docker push image') {
             steps {
                 script{
-                    dir("Api1"){
-                        withDockerRegistry(credentialsId: 'nexus', url: "http://${NEXUS_DOCKER_URL}") {
-                            sh "docker tag simple-app ${NEXUS_DOCKER_URL}/${IMAGE_NAME}:${IMAGE_TAG}"
-                            sh "docker push ${NEXUS_DOCKER_URL}/${IMAGE_NAME}:${IMAGE_TAG}"
-                        }
-                    }
+                    sh 'docker push kissriva/node-app'
                 }
             }
         }
@@ -59,17 +54,14 @@ pipeline{
         stage("Install Docker"){
             steps{
                 script{
-                    ansiblePlaybook credentialsId: 'jenkins-chat-app', disableHostKeyChecking: true, inventory: 'ansible/dev.inv', playbook: 'ansible/install_docker.yaml'
+                    ansiblePlaybook credentialsId: 'ansible-pvt-key', disableHostKeyChecking: true, inventory: 'ansible/dev.inv', playbook: 'ansible/install_docker.yaml'
                 }
             }
         }
         stage("Deploy docker image"){
             steps{
                 script{
-                    timeout(time: 5, unit: 'MINUTES') {
-                		input(id: "private-repo", message: "private repo", ok: 'ok')
-                    }
-                    ansiblePlaybook credentialsId: 'jenkins-chat-app', extras: '--extra-vars="image_tag=${IMAGE_TAG}"', inventory: 'ansible/dev.inv', playbook: 'ansible/run_docker.yaml', vaultCredentialsId: 'ansible-vault'
+                    ansiblePlaybook credentialsId: 'ansible-pvt-key', inventory: 'ansible/dev.inv', playbook: 'ansible/run_docker.yaml'
                 }
             }
         }
@@ -77,7 +69,6 @@ pipeline{
     post{
         always{
             deleteDir()
-            sh "docker rmi ${NEXUS_DOCKER_URL}/${IMAGE_NAME}:${IMAGE_TAG}"
         }
     }
 }
