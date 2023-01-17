@@ -27,7 +27,7 @@ pipeline{
                   	input(id: "sonar", message: "SonarQube", ok: 'OK')
                 }
                 dir("node_app"){
-                    sh 'mvn clean verify sonar:sonar \
+                    sh 'sonar-scanner \
                             -Dsonar.projectKey=kislaya \
                             -Dsonar.host.url=http://35.206.100.225:9000 \
                             -Dsonar.login=sqp_6ab0c20b3f0ae2249d921f656dc8930bb7f6fec7' 
